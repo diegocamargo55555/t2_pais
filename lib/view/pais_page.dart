@@ -11,9 +11,12 @@ class PaisPage extends StatefulWidget {
   State<PaisPage> createState() => _PaisPageState();
 }
 
+enum OrderOption { orderAZ, orderZA, orderPopDesc, orderPopAsc }
+
 class _PaisPageState extends State<PaisPage> {
   late PaisHelper dbPais;
   List<Pais> listaPaises = [];
+  OrderOption _currentOrder = OrderOption.orderAZ;
 
   @override
   void initState() {
@@ -26,7 +29,33 @@ class _PaisPageState extends State<PaisPage> {
     List<Pais> x = await dbPais.getPaises();
     setState(() {
       listaPaises = x;
+      _ordenarLista(); 
     });
+  }
+
+  void _ordenarLista() {
+    switch (_currentOrder) {
+      case OrderOption.orderAZ:
+        listaPaises.sort(
+          (a, b) => a.nome.toLowerCase().compareTo(b.nome.toLowerCase()),
+        );
+        break;
+      case OrderOption.orderZA:
+        listaPaises.sort(
+          (a, b) => b.nome.toLowerCase().compareTo(a.nome.toLowerCase()),
+        );
+        break;
+      case OrderOption.orderPopDesc:
+        listaPaises.sort(
+          (a, b) => b.populacao.compareTo(a.populacao),
+        ); 
+        break;
+      case OrderOption.orderPopAsc:
+        listaPaises.sort(
+          (a, b) => a.populacao.compareTo(b.populacao),
+        ); 
+        break;
+    }
   }
 
   _deletarPais(int id) async {
@@ -37,7 +66,41 @@ class _PaisPageState extends State<PaisPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Lista de Países'), centerTitle: true),
+      appBar: AppBar(
+        title: const Text('Lista de Países'),
+        centerTitle: true,
+        actions: [
+          PopupMenuButton<OrderOption>(
+            icon: const Icon(Icons.sort),
+            tooltip: 'Ordenar',
+            onSelected: (OrderOption result) {
+              setState(() {
+                _currentOrder = result;
+                _ordenarLista();
+              });
+            },
+            itemBuilder: (BuildContext context) =>
+                <PopupMenuEntry<OrderOption>>[
+                  const PopupMenuItem<OrderOption>(
+                    value: OrderOption.orderAZ,
+                    child: Text('Nome (A-Z)'),
+                  ),
+                  const PopupMenuItem<OrderOption>(
+                    value: OrderOption.orderZA,
+                    child: Text('Nome (Z-A)'),
+                  ),
+                  const PopupMenuItem<OrderOption>(
+                    value: OrderOption.orderPopDesc,
+                    child: Text('População (Maior > Menor)'),
+                  ),
+                  const PopupMenuItem<OrderOption>(
+                    value: OrderOption.orderPopAsc,
+                    child: Text('População (Menor > Maior)'),
+                  ),
+                ],
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () async {
@@ -55,7 +118,7 @@ class _PaisPageState extends State<PaisPage> {
           image: DecorationImage(
             image: AssetImage("assets/onu.jpeg"),
             fit: BoxFit.cover,
-            opacity: 0.3, 
+            opacity: 0.3,
           ),
         ),
         child: listaPaises.isEmpty
@@ -92,7 +155,9 @@ class _PaisPageState extends State<PaisPage> {
                               child: Icon(Icons.flag, size: 30),
                             ),
                       title: Text('${p.nome} (${p.sigla})'),
-                      subtitle: Text('Capital: ${p.capital} | ${p.continente}'),
+                      subtitle: Text(
+                        'Capital: ${p.capital} | Pop: ${p.populacao}',
+                      ),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
