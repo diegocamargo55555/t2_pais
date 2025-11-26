@@ -1,6 +1,6 @@
-import 'dart:io'; // Import necessário para usar File
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart'; // Import do image_picker
+import 'package:image_picker/image_picker.dart'; 
 import 'package:t2_pais/database/helper/pais_helper.dart';
 import 'package:t2_pais/database/model/pais_model.dart';
 
@@ -96,115 +96,146 @@ class _CadastroPaisPageState extends State<CadastroPaisPage> {
           widget.paisParaEditar == null ? 'Novo País' : 'Editar País',
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              GestureDetector(
-                onTap: _selecionarImagem,
-                child: Container(
-                  height: 150,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child:
-                      _caminhoImagemBandeira != null &&
-                          File(_caminhoImagemBandeira!).existsSync()
-                      ? ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: Image.file(
-                            File(_caminhoImagemBandeira!),
-                            fit: BoxFit.cover,
-                          ),
-                        )
-                      : const Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.add_a_photo,
-                              size: 50,
-                              color: Colors.grey,
+
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/onu.jpeg"),
+            fit: BoxFit.cover,
+            opacity: 0.3,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: ListView(
+              children: [
+                GestureDetector(
+                  onTap: _selecionarImagem,
+                  child: Container(
+                    height: 150,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200]?.withOpacity(0.8),
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child:
+                        _caminhoImagemBandeira != null &&
+                            File(_caminhoImagemBandeira!).existsSync()
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: Image.file(
+                              File(_caminhoImagemBandeira!),
+                              fit: BoxFit.cover,
                             ),
-                            Text("Toque para adicionar bandeira"),
-                          ],
-                        ),
+                          )
+                        : const Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.add_a_photo,
+                                size: 50,
+                                color: Colors.grey,
+                              ),
+                              Text("Toque para adicionar bandeira"),
+                            ],
+                          ),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: _nomeController,
-                decoration: const InputDecoration(labelText: 'Nome'),
-                validator: (value) =>
-                    value!.isEmpty ? 'Campo obrigatório' : null,
-              ),
-              TextFormField(
-                controller: _capitalController,
-                decoration: const InputDecoration(labelText: 'Capital'),
-                validator: (value) =>
-                    value!.isEmpty ? 'Campo obrigatório' : null,
-              ),
-              TextFormField(
-                controller: _populacaoController,
-                decoration: const InputDecoration(labelText: 'População'),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Campo obrigatório';
-                  }
-                  if (int.tryParse(value) == null) {
-                    return 'Digite apenas números inteiros';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _siglaController,
-                decoration: const InputDecoration(labelText: 'Sigla'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Campo obrigatório';
-                  }
-                  // Verifica o tamanho da string
-                  if (value.length < 2 || value.length > 3) {
-                    return 'A sigla deve ter 2 ou 3 caracteres';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 10),
-              DropdownButtonFormField<String>(
-                value: _continenteSelecionado,
-                decoration: const InputDecoration(labelText: 'Continente'),
-                items: _continentes
-                    .map((c) => DropdownMenuItem(value: c, child: Text(c)))
-                    .toList(),
-                onChanged: (value) =>
-                    setState(() => _continenteSelecionado = value),
-                validator: (value) =>
-                    value == null ? 'Selecione um continente' : null,
-              ),
-              const SizedBox(height: 10),
-              DropdownButtonFormField<String>(
-                value: _regimeSelecionado,
-                decoration: const InputDecoration(labelText: 'Regime Político'),
-                items: _regimes
-                    .map((r) => DropdownMenuItem(value: r, child: Text(r)))
-                    .toList(),
-                onChanged: (value) =>
-                    setState(() => _regimeSelecionado = value),
-                validator: (value) =>
-                    value == null ? 'Selecione um regime' : null,
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _salvarPais,
-                child: const Text('Salvar'),
-              ),
-            ],
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _nomeController,
+                  decoration: const InputDecoration(
+                    labelText: 'Nome',
+                    filled: true,
+                    fillColor: Colors.white70,
+                  ),
+                  validator: (value) =>
+                      value!.isEmpty ? 'Campo obrigatório' : null,
+                ),
+                TextFormField(
+                  controller: _capitalController,
+                  decoration: const InputDecoration(
+                    labelText: 'Capital',
+                    filled: true,
+                    fillColor: Colors.white70,
+                  ),
+                  validator: (value) =>
+                      value!.isEmpty ? 'Campo obrigatório' : null,
+                ),
+                TextFormField(
+                  controller: _populacaoController,
+                  decoration: const InputDecoration(
+                    labelText: 'População',
+                    filled: true,
+                    fillColor: Colors.white70,
+                  ),
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null || value.isEmpty)
+                      return 'Campo obrigatório';
+                    if (int.tryParse(value) == null)
+                      return 'Digite apenas números inteiros';
+                    return null;
+                  },
+                ),
+                TextFormField(
+                  controller: _siglaController,
+                  decoration: const InputDecoration(
+                    labelText: 'Sigla',
+                    filled: true,
+                    fillColor: Colors.white70,
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty)
+                      return 'Campo obrigatório';
+                    if (value.length < 2 || value.length > 3)
+                      return 'A sigla deve ter 2 ou 3 caracteres';
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 10),
+                DropdownButtonFormField<String>(
+                  value: _continenteSelecionado,
+                  decoration: const InputDecoration(
+                    labelText: 'Continente',
+                    filled: true,
+                    fillColor: Colors.white70,
+                  ),
+                  items: _continentes
+                      .map((c) => DropdownMenuItem(value: c, child: Text(c)))
+                      .toList(),
+                  onChanged: (value) =>
+                      setState(() => _continenteSelecionado = value),
+                  validator: (value) =>
+                      value == null ? 'Selecione um continente' : null,
+                ),
+                const SizedBox(height: 10),
+                DropdownButtonFormField<String>(
+                  value: _regimeSelecionado,
+                  decoration: const InputDecoration(
+                    labelText: 'Regime Político',
+                    filled: true,
+                    fillColor: Colors.white70,
+                  ),
+                  items: _regimes
+                      .map((r) => DropdownMenuItem(value: r, child: Text(r)))
+                      .toList(),
+                  onChanged: (value) =>
+                      setState(() => _regimeSelecionado = value),
+                  validator: (value) =>
+                      value == null ? 'Selecione um regime' : null,
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: _salvarPais,
+                  child: const Text('Salvar'),
+                ),
+              ],
+            ),
           ),
         ),
       ),

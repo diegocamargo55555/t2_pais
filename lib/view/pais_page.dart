@@ -1,4 +1,4 @@
-import 'dart:io'; // Necessário para usar File
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:t2_pais/database/helper/pais_helper.dart';
 import 'package:t2_pais/database/model/pais_model.dart';
@@ -48,88 +48,99 @@ class _PaisPageState extends State<PaisPage> {
           if (saved == true) _atualizarLista();
         },
       ),
-      body: listaPaises.isEmpty
-          ? const Center(child: Text('Nenhum país cadastrado.'))
-          : ListView.builder(
-              itemCount: listaPaises.length,
-              itemBuilder: (context, index) {
-                Pais p = listaPaises[index];
-                return Card(
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 5,
-                  ),
-                  child: ListTile(
-                    // ALTERAÇÃO AQUI: Substituição do CircleAvatar por um formato retangular
-                    leading:
-                        p.bandeira != null && File(p.bandeira!).existsSync()
-                        ? SizedBox(
-                            width:
-                                60, // Defina a largura desejada (ex: formato bandeira)
-                            height: 40, // Defina a altura desejada
-                            child: Image.file(
-                              File(p.bandeira!),
-                              fit: BoxFit
-                                  .cover, // Ajusta a imagem para cobrir o retângulo
-                            ),
-                          )
-                        : const SizedBox(
-                            width: 60,
-                            height: 40,
-                            child: Icon(
-                              Icons.flag,
-                              size: 30,
-                            ), // Ícone centralizado no retângulo
-                          ),
-                    title: Text('${p.nome} (${p.sigla})'),
-                    subtitle: Text('Capital: ${p.capital} | ${p.continente}'),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.edit, color: Colors.blue),
-                          onPressed: () async {
-                            bool? edited = await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    CadastroPaisPage(paisParaEditar: p),
-                              ),
-                            );
-                            if (edited == true) _atualizarLista();
-                          },
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                title: const Text('Excluir'),
-                                content: Text('Deseja excluir ${p.nome}?'),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    child: const Text('Cancelar'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      _deletarPais(p.id!);
-                                      Navigator.pop(context);
-                                    },
-                                    child: const Text('Excluir'),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                      ],
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/onu.jpeg"),
+            fit: BoxFit.cover,
+            opacity: 0.3, 
+          ),
+        ),
+        child: listaPaises.isEmpty
+            ? const Center(
+                child: Text(
+                  'Nenhum país cadastrado.',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              )
+            : ListView.builder(
+                itemCount: listaPaises.length,
+                itemBuilder: (context, index) {
+                  Pais p = listaPaises[index];
+                  return Card(
+                    elevation: 3,
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 5,
                     ),
-                  ),
-                );
-              },
-            ),
+                    child: ListTile(
+                      leading:
+                          p.bandeira != null && File(p.bandeira!).existsSync()
+                          ? SizedBox(
+                              width: 60,
+                              height: 40,
+                              child: Image.file(
+                                File(p.bandeira!),
+                                fit: BoxFit.cover,
+                              ),
+                            )
+                          : const SizedBox(
+                              width: 60,
+                              height: 40,
+                              child: Icon(Icons.flag, size: 30),
+                            ),
+                      title: Text('${p.nome} (${p.sigla})'),
+                      subtitle: Text('Capital: ${p.capital} | ${p.continente}'),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.edit, color: Colors.blue),
+                            onPressed: () async {
+                              bool? edited = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      CadastroPaisPage(paisParaEditar: p),
+                                ),
+                              );
+                              if (edited == true) _atualizarLista();
+                            },
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: const Text('Excluir'),
+                                  content: Text('Deseja excluir ${p.nome}?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: const Text('Cancelar'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        _deletarPais(p.id!);
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text('Excluir'),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+      ),
     );
   }
 }
