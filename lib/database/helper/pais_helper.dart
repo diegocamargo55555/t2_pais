@@ -32,7 +32,8 @@ class PaisHelper {
         populacao INTEGER,
         sigla TEXT,
         continente TEXT,
-        regime_politico TEXT
+        regime_politico TEXT,
+        bandeira TEXT  -- Nova coluna adicionada
       )
     ''');
       },

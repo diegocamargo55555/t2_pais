@@ -6,6 +6,7 @@ class Pais {
   String sigla;
   String continente;
   String regimePolitico;
+  String? bandeira; // Novo campo para o caminho da imagem
 
   Pais({
     this.id,
@@ -15,6 +16,7 @@ class Pais {
     required this.sigla,
     required this.continente,
     required this.regimePolitico,
+    this.bandeira, // Adicione no construtor
   });
 
   Map<String, dynamic> toMap() {
@@ -26,6 +28,7 @@ class Pais {
       'sigla': sigla,
       'continente': continente,
       'regime_politico': regimePolitico,
+      'bandeira': bandeira, // Adicione no map
     };
   }
 
@@ -38,6 +41,7 @@ class Pais {
       sigla: map['sigla'],
       continente: map['continente'],
       regimePolitico: map['regime_politico'],
+      bandeira: map['bandeira'], // Recupere do map
     );
   }
 }

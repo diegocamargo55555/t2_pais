@@ -1,4 +1,6 @@
+import 'dart:io'; // Import necessário para usar File
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart'; // Import do image_picker
 import 'package:t2_pais/database/helper/pais_helper.dart';
 import 'package:t2_pais/database/model/pais_model.dart';
 
@@ -20,6 +22,7 @@ class _CadastroPaisPageState extends State<CadastroPaisPage> {
 
   String? _continenteSelecionado;
   String? _regimeSelecionado;
+  String? _caminhoImagemBandeira;
 
   final List<String> _continentes = [
     'África',
@@ -47,6 +50,19 @@ class _CadastroPaisPageState extends State<CadastroPaisPage> {
       _siglaController.text = widget.paisParaEditar!.sigla;
       _continenteSelecionado = widget.paisParaEditar!.continente;
       _regimeSelecionado = widget.paisParaEditar!.regimePolitico;
+      _caminhoImagemBandeira =
+          widget.paisParaEditar!.bandeira; 
+    }
+  }
+
+  Future<void> _selecionarImagem() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      setState(() {
+        _caminhoImagemBandeira = image.path;
+      });
     }
   }
 
@@ -60,6 +76,7 @@ class _CadastroPaisPageState extends State<CadastroPaisPage> {
         sigla: _siglaController.text,
         continente: _continenteSelecionado!,
         regimePolitico: _regimeSelecionado!,
+        bandeira: _caminhoImagemBandeira, 
       );
 
       PaisHelper db = PaisHelper();
@@ -86,6 +103,39 @@ class _CadastroPaisPageState extends State<CadastroPaisPage> {
           key: _formKey,
           child: ListView(
             children: [
+              GestureDetector(
+                onTap: _selecionarImagem,
+                child: Container(
+                  height: 150,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child:
+                      _caminhoImagemBandeira != null &&
+                          File(_caminhoImagemBandeira!).existsSync()
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.file(
+                            File(_caminhoImagemBandeira!),
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                      : const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.add_a_photo,
+                              size: 50,
+                              color: Colors.grey,
+                            ),
+                            Text("Toque para adicionar bandeira"),
+                          ],
+                        ),
+                ),
+              ),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: _nomeController,
                 decoration: const InputDecoration(labelText: 'Nome'),
