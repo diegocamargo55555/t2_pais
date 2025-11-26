@@ -50,8 +50,7 @@ class _CadastroPaisPageState extends State<CadastroPaisPage> {
       _siglaController.text = widget.paisParaEditar!.sigla;
       _continenteSelecionado = widget.paisParaEditar!.continente;
       _regimeSelecionado = widget.paisParaEditar!.regimePolitico;
-      _caminhoImagemBandeira =
-          widget.paisParaEditar!.bandeira; 
+      _caminhoImagemBandeira = widget.paisParaEditar!.bandeira;
     }
   }
 
@@ -76,7 +75,7 @@ class _CadastroPaisPageState extends State<CadastroPaisPage> {
         sigla: _siglaController.text,
         continente: _continenteSelecionado!,
         regimePolitico: _regimeSelecionado!,
-        bandeira: _caminhoImagemBandeira, 
+        bandeira: _caminhoImagemBandeira,
       );
 
       PaisHelper db = PaisHelper();
@@ -152,14 +151,29 @@ class _CadastroPaisPageState extends State<CadastroPaisPage> {
                 controller: _populacaoController,
                 decoration: const InputDecoration(labelText: 'População'),
                 keyboardType: TextInputType.number,
-                validator: (value) =>
-                    value!.isEmpty ? 'Campo obrigatório' : null,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Campo obrigatório';
+                  }
+                  if (int.tryParse(value) == null) {
+                    return 'Digite apenas números inteiros';
+                  }
+                  return null;
+                },
               ),
               TextFormField(
                 controller: _siglaController,
                 decoration: const InputDecoration(labelText: 'Sigla'),
-                validator: (value) =>
-                    value!.isEmpty ? 'Campo obrigatório' : null,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Campo obrigatório';
+                  }
+                  // Verifica o tamanho da string
+                  if (value.length < 2 || value.length > 3) {
+                    return 'A sigla deve ter 2 ou 3 caracteres';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 10),
               DropdownButtonFormField<String>(
