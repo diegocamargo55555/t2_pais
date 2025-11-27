@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart'; 
+import 'package:image_picker/image_picker.dart';
 import 'package:t2_pais/database/helper/pais_helper.dart';
 import 'package:t2_pais/database/model/pais_model.dart';
 
@@ -19,6 +19,8 @@ class _CadastroPaisPageState extends State<CadastroPaisPage> {
   final _capitalController = TextEditingController();
   final _populacaoController = TextEditingController();
   final _siglaController = TextEditingController();
+  final _descricaoController = TextEditingController();
+  final _linkController = TextEditingController();
 
   String? _continenteSelecionado;
   String? _regimeSelecionado;
@@ -48,6 +50,8 @@ class _CadastroPaisPageState extends State<CadastroPaisPage> {
       _capitalController.text = widget.paisParaEditar!.capital;
       _populacaoController.text = widget.paisParaEditar!.populacao.toString();
       _siglaController.text = widget.paisParaEditar!.sigla;
+      _descricaoController.text = widget.paisParaEditar!.descricao;
+      _linkController.text = widget.paisParaEditar!.link;
       _continenteSelecionado = widget.paisParaEditar!.continente;
       _regimeSelecionado = widget.paisParaEditar!.regimePolitico;
       _caminhoImagemBandeira = widget.paisParaEditar!.bandeira;
@@ -57,7 +61,6 @@ class _CadastroPaisPageState extends State<CadastroPaisPage> {
   Future<void> _selecionarImagem() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-
     if (image != null) {
       setState(() {
         _caminhoImagemBandeira = image.path;
@@ -76,6 +79,8 @@ class _CadastroPaisPageState extends State<CadastroPaisPage> {
         continente: _continenteSelecionado!,
         regimePolitico: _regimeSelecionado!,
         bandeira: _caminhoImagemBandeira,
+        descricao: _descricaoController.text,
+        link: _linkController.text,
       );
 
       PaisHelper db = PaisHelper();
@@ -96,7 +101,6 @@ class _CadastroPaisPageState extends State<CadastroPaisPage> {
           widget.paisParaEditar == null ? 'Novo País' : 'Editar País',
         ),
       ),
-
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -146,6 +150,7 @@ class _CadastroPaisPageState extends State<CadastroPaisPage> {
                   ),
                 ),
                 const SizedBox(height: 20),
+
                 TextFormField(
                   controller: _nomeController,
                   decoration: const InputDecoration(
@@ -189,14 +194,28 @@ class _CadastroPaisPageState extends State<CadastroPaisPage> {
                     filled: true,
                     fillColor: Colors.white70,
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty)
-                      return 'Campo obrigatório';
-                    if (value.length < 2 || value.length > 3)
-                      return 'A sigla deve ter 2 ou 3 caracteres';
-                    return null;
-                  },
+                  validator: (value) =>
+                      value!.isEmpty ? 'Campo obrigatório' : null,
                 ),
+
+                TextFormField(
+                  controller: _linkController,
+                  decoration: const InputDecoration(
+                    labelText: 'Link (Site)',
+                    filled: true,
+                    fillColor: Colors.white70,
+                  ),
+                ),
+                TextFormField(
+                  controller: _descricaoController,
+                  decoration: const InputDecoration(
+                    labelText: 'Descrição Detalhada',
+                    filled: true,
+                    fillColor: Colors.white70,
+                  ),
+                  maxLines: 3,
+                ),
+
                 const SizedBox(height: 10),
                 DropdownButtonFormField<String>(
                   value: _continenteSelecionado,

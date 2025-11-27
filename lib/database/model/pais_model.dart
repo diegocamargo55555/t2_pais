@@ -6,7 +6,9 @@ class Pais {
   String sigla;
   String continente;
   String regimePolitico;
-  String? bandeira; 
+  String? bandeira;
+  String descricao;
+  String link;
 
   Pais({
     this.id,
@@ -16,7 +18,9 @@ class Pais {
     required this.sigla,
     required this.continente,
     required this.regimePolitico,
-    this.bandeira, 
+    this.bandeira,
+    required this.descricao,
+    required this.link,
   });
 
   Map<String, dynamic> toMap() {
@@ -28,7 +32,9 @@ class Pais {
       'sigla': sigla,
       'continente': continente,
       'regime_politico': regimePolitico,
-      'bandeira': bandeira, 
+      'bandeira': bandeira,
+      'descricao': descricao,
+      'link': link,
     };
   }
 
@@ -41,7 +47,9 @@ class Pais {
       sigla: map['sigla'],
       continente: map['continente'],
       regimePolitico: map['regime_politico'],
-      bandeira: map['bandeira'], 
+      bandeira: map['bandeira'],
+      descricao: map['descricao'] ?? '',
+      link: map['link'] ?? '',
     );
   }
 }

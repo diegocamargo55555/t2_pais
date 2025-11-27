@@ -33,9 +33,17 @@ class PaisHelper {
         sigla TEXT,
         continente TEXT,
         regime_politico TEXT,
-        bandeira TEXT  -- Nova coluna adicionada
+        bandeira TEXT,
+        descricao TEXT, 
+        link TEXT
       )
     ''');
+      },
+      onUpgrade: (Database db, int oldVersion, int newVersion) async {
+        if (oldVersion < 2) {
+          await db.execute('ALTER TABLE pais ADD COLUMN descricao TEXT');
+          await db.execute('ALTER TABLE pais ADD COLUMN link TEXT');
+        }
       },
     );
   }

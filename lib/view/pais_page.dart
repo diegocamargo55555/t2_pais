@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:t2_pais/database/helper/pais_helper.dart';
 import 'package:t2_pais/database/model/pais_model.dart';
 import 'package:t2_pais/view/cadastro_page.dart';
+import 'package:t2_pais/view/detalhes_page.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PaisPage extends StatefulWidget {
   const PaisPage({super.key});
@@ -29,7 +31,7 @@ class _PaisPageState extends State<PaisPage> {
     List<Pais> x = await dbPais.getPaises();
     setState(() {
       listaPaises = x;
-      _ordenarLista(); 
+      _ordenarLista();
     });
   }
 
@@ -46,14 +48,10 @@ class _PaisPageState extends State<PaisPage> {
         );
         break;
       case OrderOption.orderPopDesc:
-        listaPaises.sort(
-          (a, b) => b.populacao.compareTo(a.populacao),
-        ); 
+        listaPaises.sort((a, b) => b.populacao.compareTo(a.populacao));
         break;
       case OrderOption.orderPopAsc:
-        listaPaises.sort(
-          (a, b) => a.populacao.compareTo(b.populacao),
-        ); 
+        listaPaises.sort((a, b) => a.populacao.compareTo(b.populacao));
         break;
     }
   }
@@ -139,6 +137,42 @@ class _PaisPageState extends State<PaisPage> {
                       vertical: 5,
                     ),
                     child: ListTile(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DetalhesPaisPage(pais: p),
+                          ),
+                        );
+                      },
+                      onLongPress: () async {
+                        if (p.link.isNotEmpty) {
+                          final Uri url = Uri.parse(
+                            p.link.startsWith('http')
+                                ? p.link
+                                : 'https://${p.link}',
+                          );
+                          if (!await launchUrl(
+                            url,
+                            mode: LaunchMode.externalApplication,
+                          )) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Não foi possível abrir o link"),
+                              ),
+                            );
+                          }
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                "Nenhum link cadastrado para este país",
+                              ),
+                            ),
+                          );
+                        }
+                      },
+
                       leading:
                           p.bandeira != null && File(p.bandeira!).existsSync()
                           ? SizedBox(
